@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Error in input file: cannot read config\n");
 		exit(7);
 	}
-
+printf("hello");
 	if (BP_init(btbSize, historySize, tagSize,fsmState, isGlobalHist,
 			isGlobalTable, Shared) < 0) {
 		fprintf(stderr, "Predictor init failed\n");
