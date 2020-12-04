@@ -4,7 +4,9 @@
 #include "bp_api.h"
 #include <math.h>
 #include <stdlib.h>
-#include <iostream>  
+#include <iostream> 
+#define LSBSHARE 1
+#define MIDSHARE 2
 
 enum State {SNT =0, WNT =1, WT=2, ST=3};
 
@@ -309,7 +311,21 @@ unsigned int a= hazai.btbSize;
 	}
 	if (hazai.shurut[index].tag == pc_tag)
 	{
-		bool res = predict(*hazai.shurut[index].fsm);
+		// if (hazai.Shared == LSBSHARE && hazai.isGlobalTable == true)
+		// {
+		// 	uint32_t new_tag = pc >> 2;
+		// 	uint32_t cut_tag = new_tag << (32-hazai.historySize);
+		// 	uint32_t new_cut_tag = cut_tag >> (32-hazai.historySize);
+		// 	bool res = predict(hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag]);
+		// }
+		// // XOR PC HISTORY FROM BIT 2
+		
+		// else if (hazai.Shared == MIDSHARE && hazai.isGlobalTable == true)
+		// // XOR PC HISTORY FROM BIT 16
+
+		// else
+		bool res = predict(hazai.shurut[index].fsm[*hazai.shurut[index].history]);
+		//bool res = predict(*hazai.shurut[index].fsm);
 		if (res)
 		{
 			*dst = hazai.shurut[index].target;
@@ -363,19 +379,19 @@ void BP_GetStats(SIM_stats *curStats){
 
 	if (isGlobalTable == 0 && isGlobalHist == 0) // local history , local fsm
 	{
-		curStats->size = hazai.btbSize * (1+ hazai.tagSize + 32 + hazai.historySize + 2*pow(2, hazai.historySize));// TODO check target size
+		curStats->size = hazai.btbSize * (1+ hazai.tagSize + 30 + hazai.historySize + 2*pow(2, hazai.historySize));// TODO check target size
 	}
 	else if (isGlobalTable == 1 && isGlobalHist == 0)// local history global fsm
 	{
-		curStats->size = (hazai.btbSize * (1+ hazai.tagSize + 32+hazai.historySize)+ 2*pow(2, hazai.historySize));
+		curStats->size = (hazai.btbSize * (1+ hazai.tagSize + 30+hazai.historySize)+ 2*pow(2, hazai.historySize));
 	}
 	else if (isGlobalTable == 0 && isGlobalHist == 1)// global history local fsm
 	{
-		curStats->size = (hazai.btbSize * (1+ hazai.tagSize + 32+2*pow(2, hazai.historySize))+ hazai.historySize);
+		curStats->size = (hazai.btbSize * (1+ hazai.tagSize + 30+2*pow(2, hazai.historySize))+ hazai.historySize);
 	}
 	else if (isGlobalTable == 1 && isGlobalHist == 1)// global history global fsm
 	{
-		curStats->size = (hazai.btbSize * (1+ hazai.tagSize + 32) + hazai.historySize + 2*pow(2, hazai.historySize));
+		curStats->size = (hazai.btbSize * (1+ hazai.tagSize + 30) + hazai.historySize + 2*pow(2, hazai.historySize));
 	}
 	// hazai.~bp();
 		for (unsigned int i = 0; i < hazai.btbSize; i++)
