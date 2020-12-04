@@ -1,0 +1,18 @@
+#!/bin/bash
+
+counter=0
+
+for (( c=1; c<=75; c++ ))
+do
+
+  ./bp_main tests/test$c.trc > tests/test$c.myout
+  if (( `diff tests/test$c.out  tests/test$c.myout | wc -l` == 0 )); then
+    echo "success  $c" 
+  else
+    echo "failure  $c"
+    counter=$((counter+1))
+    #cat tests/test$c.trc | head -n 1
+  fi
+done
+
+echo "number of tests failed : ${counter}" 

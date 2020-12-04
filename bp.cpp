@@ -89,7 +89,6 @@ bp::~bp()
 }
 
 /* HAZAI */
-// bp *hazai1 ;
 bp hazai;
 
 /* Global Functions */
@@ -309,23 +308,32 @@ unsigned int a= hazai.btbSize;
 		std::cout << "Error opening file";
 		exit (1);
 	}
-	if (hazai.shurut[index].tag == pc_tag)
+	if (hazai.shurut[index].tag == pc_tag && hazai.shurut[index].valid == true)
 	{
-		// if (hazai.Shared == LSBSHARE && hazai.isGlobalTable == true)
-		// {
-		// 	uint32_t new_tag = pc >> 2;
-		// 	uint32_t cut_tag = new_tag << (32-hazai.historySize);
-		// 	uint32_t new_cut_tag = cut_tag >> (32-hazai.historySize);
-		// 	bool res = predict(hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag]);
-		// }
-		// // XOR PC HISTORY FROM BIT 2
+		bool res;
+		if (hazai.Shared == LSBSHARE && hazai.isGlobalTable == true)
+		{
+			uint32_t new_tag = pc >> 2;
+			uint32_t cut_tag = new_tag << (32-hazai.historySize);
+			uint32_t new_cut_tag = cut_tag >> (32-hazai.historySize);
+			res = predict(hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag]);
+		}
+		// XOR PC HISTORY FROM BIT 2
 		
-		// else if (hazai.Shared == MIDSHARE && hazai.isGlobalTable == true)
-		// // XOR PC HISTORY FROM BIT 16
+		else if (hazai.Shared == MIDSHARE && hazai.isGlobalTable == true)
+		{
+			uint32_t new_tag = pc >> 16;
+			uint32_t cut_tag = new_tag << (32-hazai.historySize);
+			uint32_t new_cut_tag = cut_tag >> (32-hazai.historySize);
+			res = predict(hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag]);
+		}
+		// XOR PC HISTORY FROM BIT 16
 
-		// else
-		bool res = predict(hazai.shurut[index].fsm[*hazai.shurut[index].history]);
-		//bool res = predict(*hazai.shurut[index].fsm);
+		else
+		{
+			res = predict(hazai.shurut[index].fsm[*hazai.shurut[index].history]);
+		}
+
 		if (res)
 		{
 			*dst = hazai.shurut[index].target;
@@ -335,6 +343,7 @@ unsigned int a= hazai.btbSize;
 			*dst = pc +4;
 		}
 		return res;
+		
 	}
 	else
 	{
@@ -352,18 +361,72 @@ void BP_update(uint32_t pc, uint32_t targetPc, bool taken, uint32_t pred_dst){
 
 	if (reshuma_tag == pc_tag && hazai.shurut[index].valid)
 	{
-	hazai.shurut[index].fsm[*hazai.shurut[index].history] = nextFSM(hazai.shurut[index].fsm[*hazai.shurut[index].history], taken);
-	*hazai.shurut[index].history = updateHISTORY(*hazai.shurut[index].history, hazai.historySize, taken);
+		if (hazai.Shared == LSBSHARE && hazai.isGlobalTable == true)
+		{
+			uint32_t new_tag = pc >> 16;
+			uint32_t cut_tag = new_tag << (32-hazai.historySize);
+			uint32_t new_cut_tag = cut_tag >> (32-hazai.historySize);
+			hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag] = nextFSM(hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag], taken);
+		}
+		
+		else if (hazai.Shared == MIDSHARE && hazai.isGlobalTable == true)
+		{
+			uint32_t new_tag = pc >> 16;
+			uint32_t cut_tag = new_tag << (32-hazai.historySize);
+			uint32_t new_cut_tag = cut_tag >> (32-hazai.historySize);
+			hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag] = nextFSM(hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag], taken);
+		}
+		else
+		{
+			hazai.shurut[index].fsm[*hazai.shurut[index].history] = nextFSM(hazai.shurut[index].fsm[*hazai.shurut[index].history], taken);
+		}
+		*hazai.shurut[index].history = updateHISTORY(*hazai.shurut[index].history, hazai.historySize, taken);
 	}
 	else
 	{
 		hazai.shurut[index].valid = true;
-		hazai.shurut[index].fsm[*hazai.shurut[index].history] = nextFSM(hazai.fsmState, taken);
-		*hazai.shurut[index].history = updateHISTORY(0, hazai.historySize, taken);
+		if (hazai.Shared == LSBSHARE && hazai.isGlobalTable == true)
+		{
+			uint32_t new_tag = pc >> 16;
+			uint32_t cut_tag = new_tag << (32-hazai.historySize);
+			uint32_t new_cut_tag = cut_tag >> (32-hazai.historySize);
+			hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag] = nextFSM(hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag], taken);
+		}
+		
+		else if (hazai.Shared == MIDSHARE && hazai.isGlobalTable == true)
+		{
+			uint32_t new_tag = pc >> 16;
+			uint32_t cut_tag = new_tag << (32-hazai.historySize);
+			uint32_t new_cut_tag = cut_tag >> (32-hazai.historySize);
+			hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag] = nextFSM(hazai.shurut[index].fsm[*hazai.shurut[index].history ^ new_cut_tag], taken);
+		}
+		else
+		{
+			if (hazai.isGlobalTable == false)
+				hazai.shurut[index].fsm[*hazai.shurut[index].history] = nextFSM(hazai.fsmState, taken);
+			else
+			{
+				hazai.shurut[index].fsm[*hazai.shurut[index].history] = nextFSM(hazai.shurut[index].fsm[*hazai.shurut[index].history], taken);
+			}
+			
+		}
+
+		if (hazai.isGlobalHist ==false)
+			*hazai.shurut[index].history = updateHISTORY(0, hazai.historySize, taken);
+		else
+			*hazai.shurut[index].history = updateHISTORY(*hazai.shurut[index].history, hazai.historySize, taken);
+		
 	}
 	
-	
-	if (targetPc != pred_dst)
+	if ((targetPc != pred_dst) && (hazai.shurut[index].valid == true) && taken ) 
+	{
+		hazai.flush++;
+	}
+	else if ((pred_dst != pc+4) && !taken )
+	{
+		hazai.flush++;
+	}
+	else if ((hazai.shurut[index].valid == false) && taken )
 	{
 		hazai.flush++;
 	}
