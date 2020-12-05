@@ -155,7 +155,7 @@ uint32_t updateHISTORY(uint32_t history, unsigned int historySize ,bool taken)
 	uint32_t new_history = (history << (32 - historySize +1)) >> (32 - historySize);
 	if (taken)
 	{
-		return new_history++;
+		return (new_history+1);
 	}
 	else
 	{
