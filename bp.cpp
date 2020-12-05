@@ -92,9 +92,14 @@ bp::~bp()
 bp hazai;
 
 /* Global Functions */
-uint32_t getTAG(uint32_t pc, uint32_t tagSize)
+uint32_t getTAG(uint32_t pc)
 {
-	uint32_t tag = pc >> (32 -tagSize);
+	uint32_t tagSize = hazai.tagSize;
+	int log = (int)log2(hazai.btbSize);
+	int left = 32 - (tagSize+log+2);
+	int right = left + log + 2;
+	uint32_t tag = pc << left;
+	tag = tag >> right;
 	return tag;
 }
 bool predict(uint32_t fsm)
@@ -134,14 +139,22 @@ bool predict(uint32_t fsm)
 // 	}
 	
 //}
+int Mask(int number_of_bits)
+{ 
+	int mask = 0;
+	while (number_of_bits > 0)
+	{
+		mask = (mask << 1) + 1;
+		number_of_bits--;
+	}
+	return mask;
+}
 int getINDEX(uint32_t pc)
 {
 	uint32_t tagsize = hazai.tagSize;
-	uint32_t a = pc << hazai.tagSize;
-int log = (int)log2(hazai.btbSize);
-	uint32_t b = a >> (32- (int)log2(hazai.btbSize));
-	int c = (int)b;
-	return c;
+	int log = (int)log2(hazai.btbSize);
+	uint32_t index = (pc >> 2) & Mask(log);
+	return (int)index;
 }
 
 uint32_t nextFSM(uint32_t fsm, bool taken)
@@ -297,7 +310,7 @@ int BP_init(unsigned btbSize, unsigned historySize, unsigned tagSize, unsigned f
  
 bool BP_predict(uint32_t pc, uint32_t *dst){
 	// std::cout << "Error opening file";
-	uint32_t pc_tag = getTAG(pc, hazai.tagSize);
+	uint32_t pc_tag = getTAG(pc);
 	// shura *hazai.shurut = hazai.shurut;
 // std::cout << "Error opening file";
 unsigned int a= hazai.btbSize;
@@ -356,8 +369,9 @@ void BP_update(uint32_t pc, uint32_t targetPc, bool taken, uint32_t pred_dst){
 	hazai.branch_counter++;
 	// shura *hazai.shurut = hazai.shurut;
 	uint32_t index = getINDEX(pc);
-	uint32_t pc_tag = getTAG(pc, hazai.tagSize);
+	uint32_t pc_tag = getTAG(pc);
 	uint32_t reshuma_tag = hazai.shurut[index].tag;
+	hazai.shurut[index].target = targetPc;
 
 	if (reshuma_tag == pc_tag && hazai.shurut[index].valid)
 	{
@@ -385,6 +399,8 @@ void BP_update(uint32_t pc, uint32_t targetPc, bool taken, uint32_t pred_dst){
 	else
 	{
 		hazai.shurut[index].valid = true;
+		hazai.shurut[index].tag = pc_tag;
+		hazai.shurut[index].tag = targetPc;
 		if (hazai.Shared == LSBSHARE && hazai.isGlobalTable == true)
 		{
 			uint32_t new_tag = pc >> 16;

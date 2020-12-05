@@ -10,4 +10,4 @@
 0x6e2cc454 N 0x6e2cc458
 0x53384f84 N 0x53384f88
 0x48442464 N 0x48442468
-flush_num: 12, br_num: 12, size: 292b
+flush_num: 5, br_num: 12, size: 284b

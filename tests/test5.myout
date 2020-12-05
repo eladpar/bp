@@ -5,4 +5,4 @@
 0x28213ff0 N 0x28213ff4
 0x28213ff0 N 0x28213ff4
 0x28213ff0 N 0x28213ff4
-flush_num: 7, br_num: 7, size: 1536b
+flush_num: 4, br_num: 7, size: 1504b

@@ -14,4 +14,4 @@
 0x72abf3a8 N 0x72abf3ac
 0x7ad1c244 N 0x7ad1c248
 0x783d95d0 N 0x783d95d4
-flush_num: 16, br_num: 16, size: 94b
+flush_num: 8, br_num: 16, size: 90b

@@ -23,4 +23,4 @@
 0x589fa50c N 0x589fa510
 0x345d2940 N 0x345d2944
 0x345d2940 N 0x345d2944
-flush_num: 25, br_num: 25, size: 472b
+flush_num: 10, br_num: 25, size: 456b

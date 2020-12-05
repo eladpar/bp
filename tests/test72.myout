@@ -8,4 +8,4 @@
 0x3485f728 N 0x3485f72c
 0x4ebcc4c8 N 0x4ebcc4cc
 0x1bfd15e8 N 0x1bfd15ec
-flush_num: 10, br_num: 10, size: 264b
+flush_num: 5, br_num: 10, size: 260b

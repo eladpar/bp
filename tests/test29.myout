@@ -22,4 +22,4 @@
 0x2802a05c N 0x2802a060
 0x56259ac4 N 0x56259ac8
 0x56259ac4 N 0x56259ac8
-flush_num: 24, br_num: 24, size: 88b
+flush_num: 9, br_num: 24, size: 84b

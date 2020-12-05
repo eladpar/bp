@@ -4,4 +4,4 @@
 0x7f96d58c N 0x7f96d590
 0x2e774948 N 0x2e77494c
 0x6882a144 N 0x6882a148
-flush_num: 6, br_num: 6, size: 144b
+flush_num: 2, br_num: 6, size: 140b

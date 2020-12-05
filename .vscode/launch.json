@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bp_main",
-            "args": ["input_examples/example1.trc"],
+            "args": ["input_examples/example2.trc"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

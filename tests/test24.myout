@@ -6,4 +6,4 @@
 0x7e6b42e0 N 0x7e6b42e4
 0x7e6b42e0 N 0x7e6b42e4
 0x7e6b42e0 N 0x7e6b42e4
-flush_num: 8, br_num: 8, size: 520b
+flush_num: 4, br_num: 8, size: 504b
